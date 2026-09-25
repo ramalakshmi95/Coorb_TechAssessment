@@ -1,0 +1,301 @@
+{
+  "info": {
+    "_postman_id": "208c6d7a-26f8-42ff-a790-e41094d850cd",
+    "name": "TechnicalAssesment",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "58469041",
+    "_collection_link": "https://go.postman.co/collection/58469041-208c6d7a-26f8-42ff-a790-e41094d850cd?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "RetrieveRate_PositiveCase",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Validate Status\", function()",
+              "",
+              "{",
+              "    pm.response.to.have.status(200)",
+              "    console.log(\"Response Status is 200\")",
+              "})",
+              "pm.test(\"Validate Response Time\", function()",
+              "",
+              "{",
+              "   pm.expect(pm.response.responseTime).to.be.below(1000)",
+              "   console.log(\"Response time is less than 1000\")",
+              "   ",
+              "})",
+              "",
+              "const schema = {",
+              "  \"$schema\": \"http://json-schema.org/draft-07/schema#\",",
+              "  \"title\": \"ExchangeRateAPI Latest Rates Response\",",
+              "  \"type\": \"object\",",
+              "  \"required\": [",
+              "    \"result\",",
+              "    \"provider\",",
+              "    \"documentation\",",
+              "    \"terms_of_use\",",
+              "    \"time_last_update_unix\",",
+              "    \"time_last_update_utc\",",
+              "    \"time_next_update_unix\",",
+              "    \"time_next_update_utc\",",
+              "    \"time_eol_unix\",",
+              "    \"base_code\",",
+              "    \"rates\"",
+              "  ],",
+              "  \"properties\": {",
+              "    \"result\": {",
+              "      \"type\": \"string\",",
+              "      \"enum\": [\"success\"]",
+              "    },",
+              "    \"provider\": {",
+              "      \"type\": \"string\",",
+              "      \"format\": \"uri\"",
+              "    },",
+              "    \"documentation\": {",
+              "      \"type\": \"string\",",
+              "      \"format\": \"uri\"",
+              "    },",
+              "    \"terms_of_use\": {",
+              "      \"type\": \"string\",",
+              "      \"format\": \"uri\"",
+              "    },",
+              "    \"time_last_update_unix\": {",
+              "      \"type\": \"integer\"",
+              "    },",
+              "    \"time_last_update_utc\": {",
+              "      \"type\": \"string\"",
+              "    },",
+              "    \"time_next_update_unix\": {",
+              "      \"type\": \"integer\"",
+              "    },",
+              "    \"time_next_update_utc\": {",
+              "      \"type\": \"string\"",
+              "    },",
+              "    \"time_eol_unix\": {",
+              "      \"type\": \"integer\"",
+              "    },",
+              "    \"base_code\": {",
+              "      \"type\": \"string\",",
+              "      \"minLength\": 3,",
+              "      \"maxLength\": 3",
+              "    },",
+              "    \"rates\": {",
+              "      \"type\": \"object\",",
+              "      \"minProperties\": 1,",
+              "      \"additionalProperties\": {",
+              "        \"type\": \"number\"",
+              "      },",
+              "      \"required\": [\"USD\"]",
+              "    }",
+              "  },",
+              "  \"additionalProperties\": false",
+              "}",
+              "",
+              "pm.test(\"Validate Response Schema\", function() {",
+              "pm.response.to.have.jsonSchema(schema)",
+              "console.log(\"REsponse is matching with the schema \")",
+              "})",
+              "",
+              "pm.test(\"Validate the Target currency Rates are sensible\", function()",
+              "{",
+              "    //Save response body in json form",
+              "   const jsondata = pm.response.json();",
+              "    //Get the target currency from the environment variable i.e., SAR",
+              "   const Ccy1 = pm.environment.get(\"PositiveScenario_TestData\");",
+              "   //Verify the Target currency has a rate in response ",
+              "   if(pm.expect(jsondata.rates).to.have.property(Ccy1))",
+              "   {",
+              "       console.log(Ccy1 + \" is present in the response\")",
+              "   }",
+              "    //Verify the Target currency rate is a number and above 0",
+              "   if(pm.expect(jsondata.rates[Ccy1]).to.be.a('number'))",
+              "   {",
+              "       console.log(Ccy1 + \" Rate : \"+jsondata.rates[Ccy1]+\"\\nTarget currency rate is a number\")",
+              "",
+              "   }",
+              "  if(pm.expect(jsondata.rates[Ccy1]).to.be.above(0))",
+              "  {",
+              "    console.log(\"Target Currency rate is above 0\")",
+              "  }",
+              "});",
+              "",
+              "//validate which base currency has maximum rate when Target Currency is SAR",
+              "pm.test(\"Validate the currency with maximum Rate\", function()",
+              "{",
+              "    //capture respone body as json",
+              "    const jsondata = pm.response.json();",
+              "    //print SAR rate against base ccy",
+              "    console.log(pm.environment.get(\"PositiveScenario_TestData\")+\" Rate Against Base Currency \"+jsondata.base_code+\" : \"+jsondata.rates.SAR)",
+              "    //retrieve the currency which has max value so far ",
+              "    console.log(\"pm.collectionVariables.get(MaxValue) : \" +  pm.collectionVariables.get(\"MaxValue\"))",
+              "      console.log(\"pm.collectionVariables.get(MaxValueCcy) : \" +  pm.collectionVariables.get(\"MaxValueCcy\"))",
+              "",
+              "//logic to compare the SAR rate with the maxvalue stored so far",
+              "if(Number(jsondata.rates.SAR) >= Number(pm.collectionVariables.get(\"MaxValue\")))",
+              "{",
+              " console.log(jsondata.rates.SAR)",
+              " pm.collectionVariables.set(\"MaxValue\", jsondata.rates.SAR)",
+              " pm.collectionVariables.set(\"MaxValueCcy\", jsondata.base_code)",
+              "}",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/:basecurrency",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            ":basecurrency"
+          ],
+          "query": [
+            {
+              "key": "",
+              "value": null,
+              "type": "text",
+              "disabled": true
+            }
+          ],
+          "variable": [
+            {
+              "key": "basecurrency",
+              "value": "{{BaseCcyList}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "RetrieveRate_NegativeCase",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Validate Status\", function() {",
+              "    pm.response.to.have.status(200);",
+              "    console.log(\"Response Status is 200\");",
+              "});",
+              "",
+              "const errorSchema = {",
+              "  \"$schema\": \"http://json-schema.org/draft-07/schema#\",",
+              "  \"title\": \"ExchangeRateAPI Error Response\",",
+              "  \"type\": \"object\",",
+              "  \"required\": [\"result\", \"error-type\"],",
+              "  \"properties\": {",
+              "    \"result\": { \"type\": \"string\", \"enum\": [\"error\"] },",
+              "    \"error-type\": {",
+              "      \"type\": \"string\",",
+              "      \"enum\": [\"unsupported-code\", \"malformed-request\", \"invalid-key\", \"inactive-account\", \"quota-reached\"]",
+              "    }",
+              "  },",
+              "  \"additionalProperties\": false",
+              "};",
+              "",
+              "pm.test(\"Error response matches schema\", function () {",
+              "    pm.response.to.have.jsonSchema(errorSchema);",
+              "    jsonData = pm.response.json();",
+              "    console.log(jsonData.result +\" : \"+jsonData[\"error-type\"])",
+              "     pm.expect(jsonData.result).to.eql(\"error\");",
+              "        pm.expect(jsonData[\"error-type\"]).to.be.eql(\"unsupported-code\");",
+              "});",
+              "",
+              "",
+              "       ",
+              "",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/:basecurrency",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            ":basecurrency"
+          ],
+          "query": [
+            {
+              "key": "",
+              "value": null,
+              "type": "text",
+              "disabled": true
+            }
+          ],
+          "variable": [
+            {
+              "key": "basecurrency",
+              "value": "{{NegativeScenario_TestData}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "MaxValueCcy",
+      "value": ""
+    },
+    {
+      "key": "MaxValue",
+      "value": ""
+    }
+  ]
+}
