@@ -4,6 +4,7 @@ Task 3 – Part A – 1 hour 15 mins
 Assumptions:
 1.	Verify the Expected Target Currencies Are Present With Sensible Values: The task doesn't specify which "expected target currencies" to validate. I assumed currencies relevant to a banking context - including SAR - and validated that each 
 2.	Captures At Least One Response Value and Uses It Meaningfully: The task deliberately leaves the choice of captured value up to me. I chose to capture the SAR rate for each base currency and find the maximum, which shows meaningful chaining rather than a one-off capture.
+
 Task 3 – Part B – 20 mins
 Questions
 1.	Why Source account id is a string? I hope that its supposed to be a numeric value
